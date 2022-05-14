@@ -1,8 +1,25 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
+/* eslint-disable no-unused-vars */
 import logo from '../logo.svg'
 import 'bootstrap/dist/css/bootstrap.min.css';
-import {NavLink} from 'react-router-dom'
+import {NavLink, useNavigate} from 'react-router-dom'
+import { useSelector, useDispatch } from 'react-redux';
+import { clearCurrentUser } from '../store/actions/user';
+import { Role } from '../models/role';
 
 const NavBar = () => {
+
+    const currentUser = useSelector(state => state.user);
+
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+
+    const logout = () => {
+        dispatch(clearCurrentUser());
+        navigate('/login')
+    }
+
+
     return(
     <nav className="navbar navbar-expand navbar-dark bg-dark">
         <a href="https://reactjs.org" className="navbar-brand ms-1">
@@ -10,12 +27,15 @@ const NavBar = () => {
             
         </a>
 
-        <div className="navbar-nav me-auto">            
-            <li className="nav-item">
-                <NavLink to="/admin" className="nav-link">
-                    Admin
-                </NavLink>
-            </li>
+        <div className="navbar-nav me-auto">
+            {currentUser?.role === Role.ADMIN &&
+                <li className="nav-item">
+                    <NavLink to="/admin" className="nav-link">
+                        Admin
+                    </NavLink>
+                </li>
+            }           
+            
             <li className="nav-item">
                 <NavLink to="/home" className="nav-link">
                     Home
@@ -23,6 +43,7 @@ const NavBar = () => {
             </li>
         </div>
 
+        {!currentUser &&
         <div className="navbar-nav ms-auto">            
             <li className="nav-item">
                 <NavLink to="/register" className="nav-link">
@@ -35,6 +56,23 @@ const NavBar = () => {
                 </NavLink>
             </li>
         </div>
+        }
+
+        {currentUser &&
+        <div className="navbar-nav ms-auto">            
+            <li className="nav-item">
+                <NavLink to="/profile" className="nav-link">
+                    {currentUser.name}
+                </NavLink>
+            </li>
+            <li className="nav-item">
+                <a href="#" className="nav-link" onClick={() => logout()}>
+                    Sign Out
+                </a>
+            </li>
+        </div>
+        }  
+
     </nav>
     );
 }
