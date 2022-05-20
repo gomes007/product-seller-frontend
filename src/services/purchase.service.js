@@ -12,9 +12,8 @@ class PurchaseService {
         return axios.post(API_URL, purchase, {headers: authHeader()})
     }
 
-
-    getAllPurchase() {
-        return axios.get(API_URL)
+    getAllPurchaseItems() {
+        return axios.get(API_URL, {headers: authHeader()});
     }
 
 }
